@@ -1,0 +1,6 @@
+c A sample .cnf file.
+p cnf 4 4
+3 4 0
+-2 -3 4 0
+-2 -1 -4 0
+-2 1 4 0
