@@ -2,4 +2,4 @@
 # sudo apt-get install zlib1g-dev
 cd glucose-syrup/simp
 make rs
-./glucose --help
+./glucose_static --help
