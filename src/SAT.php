@@ -67,7 +67,7 @@ class SAT {
    * @return int | throw
    */
   private function getVarIndexNumber($var) {
-    if(($key = array_search($var, $this->setB)) === false) throw new Exception("SAT object : Boolean variable $var does not exist in set B !\n");
+    if(($key = array_search($var, $this->setB)) === false) throw new Exception("SAT object : Boolean variable $var does not exist in set B.\n");
     return $key+1; // index number need to start at 1, not 0
   }
 }
