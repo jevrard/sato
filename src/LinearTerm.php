@@ -7,7 +7,13 @@ require_once 'IntegerVariable.php';
  * @author Justine Evrard
  * @author Mariam Bouzid
  */
-class LinearTerm extends IntegerVariable {
+class LinearTerm {
+
+  /**
+   * Integer variable
+   * @var IntegerVariable
+   */
+  private $var;
 
   /**
    * Non null relative coefficient (!=0)
@@ -17,23 +23,20 @@ class LinearTerm extends IntegerVariable {
 
   /**
    * Initializes internal state of LinearTerm object
-   * @param string $name
-   * @param int $l
-   * @param int $u
+   * @param IntegerVariable $var
    * @param int $coeff
    */
-  public function __construct($name, $l, $u, $coeff) {
-    parent::__construct($name, $l, $u);
+  public function __construct(IntegerVariable $var, $coeff) {
+    $this->var = $var;
     $this->coeff = (int) $coeff;
   }
 
   /**
-   * Creates a LinearTerm object with an IntegerVariable object
-   * @param IntegerVariable $var
-   * @param int $coeff
+   * Gives the term's integer variable
+   * @return IntegerVariable
    */
-  public static function constructWithIntegerVariable(IntegerVariable $var, $coeff) {
-    return new LinearTerm($var->name, $var->domain['l'], $var->domain['u'], $coeff);
+  public function getVar() {
+    return $this->var;
   }
 
   /**
@@ -49,8 +52,8 @@ class LinearTerm extends IntegerVariable {
    * @return int
    */
   public function getLowerBound() {
-    if($this->coeff > 0) return $this->coeff*$this->domain['l'];
-    else return $this->coeff*$this->domain['u'];
+    if($this->coeff > 0) return $this->coeff*$this->var->getLowerBound();
+    else return $this->coeff*$this->var->getUpperBound();
   }
 
   /**
@@ -58,8 +61,8 @@ class LinearTerm extends IntegerVariable {
    * @return int
    */
   public function getUpperBound() {
-    if($this->coeff > 0) return $this->coeff*$this->domain['u'];
-    else return $this->coeff*$this->domain['l'];
+    if($this->coeff > 0) return $this->coeff*$this->var->getUpperBound();
+    else return $this->coeff*$this->var->getLowerBound();
   }
 
   /**
@@ -67,6 +70,6 @@ class LinearTerm extends IntegerVariable {
    * @return boolean
    */
   public function equal(LinearTerm $term) {
-    return $this->coeff == $term->coeff && parent::equal($term);
+    return $this->coeff == $term->coeff && $this->var->equal($term->var);
   }
 }

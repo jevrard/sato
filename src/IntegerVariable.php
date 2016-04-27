@@ -11,14 +11,14 @@ class IntegerVariable {
    * Integer variable's name
    * @var string
    */
-  protected $name;
+  private $name;
 
   /**
    * Integer variable's domain
    * Ex: ['l' => 1, 'u' => 5]
    * @var array of int
    */
-  protected $domain;
+  private $domain;
 
   /**
    * Initializes internal state of IntegerVariable object.
