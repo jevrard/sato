@@ -56,7 +56,7 @@ class Inequation {
   }
 
   /**
-   * Gives the FNC of primitive comparaisons (x <= c)
+   * Gives the FNC composed of primitive comparaisons (x <= c)
    * Corresponds to proposition 1
    * @return array of array of Inequation
    */
@@ -87,7 +87,7 @@ class Inequation {
   private function hashTranslation() {
     if(!$this->isOneTerm()) throw new Exception("Inequation object : impossible to apply hashTranslation() on a non one term inequation.");
     $term = $this->linearE->getTerm(0);
-    $this->linearE = array(new LinearTerm($term->getVar(), 1));
+    $this->linearE = new LinearExpression(array(new LinearTerm($term->getVar(), 1)), array($term->getVar()));
     $a = $term->getCoeff();
     $q = (float)$this->const/(float)$a;
     if($a > 0) $this->const = (int) floor($q);

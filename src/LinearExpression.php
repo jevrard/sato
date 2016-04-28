@@ -55,7 +55,7 @@ class LinearExpression {
       if(!$var = IntegerVariable::varExistsInArray($x, $vars)) throw new Exception("LinearExpression class : variable $x in expression is not in the array of variables.");
       $terms[] = new LinearTerm($var, $coeff);
     }
-    return $terms;
+    return new LinearExpression($terms, $vars);
   }
 
   /**
