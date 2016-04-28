@@ -32,7 +32,7 @@ class LinearExpression {
   }
 
   /**
-   * Parses a string expression in LinearTerm obects
+   * Parses a string expression in LinearTerm objects
    * @param string $expression
    * @param array of IntegerVaribles $vars
    * @return array of LinearTerm

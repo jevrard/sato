@@ -32,6 +32,17 @@ class IntegerVariable {
   }
 
   /**
+   * Parses a string expression in IntegerVariable objects
+   * @param string $expression
+   * @return IntegerVariable
+   */
+  public static function parseExpression($expression) {
+    $split = preg_split("/\s+/", $expression, null, PREG_SPLIT_NO_EMPTY);
+    if(count($split) != 3 || $split[2] < $split[1]) throw new Exception("IntegerVariable class : invalid expression given.");
+    return new IntegerVariable($split[0], (int)$split[1], (int)$split[2]);
+  }
+
+  /**
    * Gives the variable's name
    * @return string
    */

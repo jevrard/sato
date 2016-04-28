@@ -40,6 +40,24 @@ class Inequation {
   }
 
   /**
+   * Parses a string expression in Inequation objects
+   * @param string $expression
+   * @param array of IntegerVariable $vars
+   * @return Inequation
+   */
+  public static function parseExpression($expression,$vars) {
+    $expression = trim($expression);
+    $split = preg_split("/<=/", $expression);
+    if(count($split) != 2) throw new Exception("Inequation class : invalid expression given.");
+    try {
+      $linearExpression = LinearExpression::parseExpression($split[0], $vars);
+    } catch (Exception $e) {
+      throw $e;
+    }
+    return new Inequation($linearExpression,$split[1]);
+  }
+
+  /**
    * Tests if @this has only on term on the left
    * @return boolean
    */

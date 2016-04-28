@@ -80,7 +80,7 @@ class LinearTerm {
   public function __toString() {
     switch($this->coeff) {
       case 1: return "".$this->var;
-      case -1: return "-".$this->var;
+      case -1: return "(-".$this->var.")";
       default:
         if($this->coeff > 0) return $this->coeff.$this->var;
         else return "(".$this->coeff.$this->var.")";
