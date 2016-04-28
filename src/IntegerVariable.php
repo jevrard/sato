@@ -74,4 +74,12 @@ class IntegerVariable {
       if($var->getName() === $varName) return $var;
     return false;
   }
+
+  /**
+   * Gives the string representation of @this
+   * @return string
+   */
+  public function __toString() {
+    return $this->name;
+  }
 }

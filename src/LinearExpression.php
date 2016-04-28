@@ -108,4 +108,17 @@ class LinearExpression {
         $news[] = array_merge($combi, [$value]);
     return self::computeCombinaisons($domains, $news);
   }
+
+  /**
+   * Gives the string representation of @this
+   * @return string
+   */
+  public function __toString() {
+    $output = "";
+    $i=0;
+    for($i; $i< $this->getNumberOfTerms()-1; $i++)
+      $output .= $this->terms[$i]."+";
+    $output .= $this->terms[$i];
+    return $output;
+  }
 }

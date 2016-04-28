@@ -96,4 +96,14 @@ class Inequation {
       $this->sign = 0;
     }
   }
+
+  /**
+   * Gives the string representation of @this
+   * @return string
+   */
+  public function __toString() {
+    $output = $this->sign? "" : "-";
+    $output .= "(".$this->linearE." <= ".$this->const.")";
+    return $output;
+  }
 }
