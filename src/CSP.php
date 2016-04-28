@@ -1,3 +1,60 @@
+Mariam
+
+
+Rechercher dans Google Drive
+
+Drive
+.
+Chemin d'accès au dossier
+Mon Drive
+TER
+NOUVEAU 
+Dossiers et vues
+Mon Drive
+Partagés avec moi
+Google Photos
+Récents
+Suivis
+Corbeille
+Télécharger Drive pour PC
+4 Mo utilisés sur 15 Go
+Acheter plus d'espace de stockage
+.
+
+Google Docs
+Brouillon rapport
+
+Fichier inconnu
+Combinatoric.php
+
+PDF
+Compiling finite linear CSP into SAT.pdf
+
+PDF
+Concrete_Mathematics.pdf
+
+Fichier inconnu
+CSP.php
+
+Fichier inconnu
+Encoder.php
+
+Fichier inconnu
+Inequation.php
+
+Word
+notes.docx
+
+Google Docs
+Partie contexte
+
+Word
+projet_sato.docx
+
+PDF
+projet_sato.pdf
+
+
 <?php
 require_once 'Inequation.php';
 
@@ -28,6 +85,30 @@ class CSP {
   public function __construct($setV, $setS) {
     $this->setV = $setV;
     $this->setS = $setS;
+  }
+  
+  /**
+   * Gives the set of integer variables
+   * @return array of IntegerVariables
+   */
+   public function getVariables(){
+  	return $this->setV ;
+  }
+  
+  /**
+   * Gives the set of clauses
+   * @return array of Inequation
+   */
+  public function getClauses(){
+  	return $this->setS;
+  }
+
+  /**
+   * Gives the $ith clause
+   * @return Inequation
+   */
+  public function getClause( $i ){
+  	return $this->setS[$i];
   }
 
   /**
