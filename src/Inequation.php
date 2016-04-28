@@ -124,4 +124,29 @@ class Inequation {
     $output .= "(".$this->linearE." <= ".$this->const.")";
     return $output;
   }
+
+  /**
+   * Gives the linear expression of @this
+   * @return LinearExpression
+   */
+  public function getLinearExpression() {
+    return $this->linearE;
+  }
+
+  /**
+   * Gives the right-hand side of @this
+   * @return int
+   */
+  public function getConst() {
+    return $this->const;
+  }
+
+  /**
+   * Gives the sign of @this
+   * @return boolean
+   */
+  public function getSign() {
+    return $this->sign;
+  }
+  
 }
