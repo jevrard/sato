@@ -1,6 +1,6 @@
 <?php
-require_once 'src/SAT.php';
-require_once 'src/CSP.php';
+require_once 'SAT.php';
+require_once 'CSP.php';
 
 /**
  * Encodes CSP into SAT problem
@@ -22,11 +22,11 @@ class Encoder {
   public function __construct(CSP $csp) {
     $this->csp = $csp;
   }
-  
+
   /**
-   * Substitutes primitive comparision for boolean variables
+   * Substitutes primitive comparision by boolean variables
    * E.g. : 'x <= c' is replaced by 'p(x,c)'
-   * Referring to the a. part of 'Encodage'
+   * Referring to the a. part of 'Encodage' part
    * @return array of array of string
    */
   public function substitutions() {
@@ -51,10 +51,10 @@ class Encoder {
   	}
   	return $predicates;
   }
-  
+
   /**
    * Determines the bounds axioms
-   * Referring to the b. part , particularly the 8th definition 
+   * Referring to the b. part , particularly the 8th definition
    * @return array of array of string
    */
   public function bounds() {
@@ -67,7 +67,7 @@ class Encoder {
   	}
   	return $bounds;
   }
-  
+
   /**
    * Gives a sort of SAT representation of the CSP
    * @return array of array of string
@@ -75,5 +75,5 @@ class Encoder {
   public function encode() {
   	return array_merge($this->substitutions(), $this->bounds());
   }
-  
+
 }

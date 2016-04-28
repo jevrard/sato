@@ -17,24 +17,24 @@ class LinearExpression {
 
   /**
    * Integer variables of the expression
-   * @var array of IntegerVar
+   * @var array of IntegerVariable
    */
-  private $vars;
+  private $variables;
 
   /**
    * Initializes internal state of LinearExpression object.
    * @param array of LinearTerm $expression
-   * @param array of IntegerVar $vars
+   * @param array of IntegerVariable $vars
    */
   public function __construct($terms, $vars) {
     $this->terms = $terms;
-    $this->vars = $vars;
+    $this->variables = $vars;
   }
 
   /**
    * Parses a string expression in LinearTerm objects
    * @param string $expression
-   * @param array of IntegerVaribles $vars
+   * @param array of IntegerVarible $vars
    * @return array of LinearTerm
    */
   public static function parseExpression($expression, $vars) {
@@ -59,7 +59,7 @@ class LinearExpression {
   }
 
   /**
-   * Gives the term at the $index rank
+   * Gives the term at the rank $index
    * @return LinearTerm
    */
   public function getTerm($index) {

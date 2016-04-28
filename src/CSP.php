@@ -13,13 +13,13 @@ class CSP {
    * Set of integer variables
    * @var array of IntegerVariable
    */
-  private $setV;
+  private $variables;
 
   /**
-   * Set of clauses
-   * @var array of Inequation
+   * Set of clauses of inequation constraints
+   * @var array of array of Inequation
    */
-  private $setS;
+  private $constraints;
 
   /**
    * Initializes internal state of CSP object.
@@ -27,32 +27,8 @@ class CSP {
    * @param array of Inequation $setS
    */
   public function __construct($setV, $setS) {
-    $this->setV = $setV;
-    $this->setS = $setS;
-  }
-  
-  /**
-   * Gives the set of integer variables
-   * @return array of IntegerVariables
-   */
-   public function getVariables(){
-  	return $this->setV ;
-  }
-  
-  /**
-   * Gives the set of clauses
-   * @return array of Inequation
-   */
-  public function getClauses(){
-  	return $this->setS;
-  }
-
-  /**
-   * Gives the $ith clause
-   * @return Inequation
-   */
-  public function getClause( $i ){
-  	return $this->setS[$i];
+    $this->variables = $setV;
+    $this->constraints = $setS;
   }
 
   /**
@@ -85,5 +61,29 @@ class CSP {
     }
 
     return new CSP($vars,$inequations);
+  }
+
+  /**
+   * Gives the set of integer variables
+   * @return array of IntegerVariables
+   */
+   public function getVariables(){
+  	return $this->variables ;
+  }
+
+  /**
+   * Gives the constraints
+   * @return array of array of Inequation
+   */
+  public function getConstraints(){
+  	return $this->constraints;
+  }
+
+  /**
+   * Gives the clause at the rank $index
+   * @return array of Inequation
+   */
+  public function getClause($index){
+  	return $this->constraints[$index];
   }
 }
