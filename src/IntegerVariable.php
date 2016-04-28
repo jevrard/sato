@@ -62,4 +62,16 @@ class IntegerVariable {
   public function equal(IntegerVariable $intVar) {
     return $this->name == $intVar->name && $this->domain['l'] == $intVar->domain['l'] && $this->domain['u'] == $intVar->domain['u'];
   }
+
+  /**
+   * Reseachs in array of IntegerVariable by a variable name
+   * @param string $varName
+   * @param array of IntegerVariable $vars
+   * @return IntegerVariable|boolean
+   */
+  public static function varExistsInArray($varName, $vars) {
+    foreach ($vars as $var)
+      if($var->getName() === $varName) return $var;
+    return false;
+  }
 }
