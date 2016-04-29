@@ -93,4 +93,19 @@ class CSP {
   public function getClause($index){
   	return $this->constraints[$index];
   }
+
+  /**
+   * Gives the string representation of @this
+   * @return string
+   */
+  public function __toString() {
+    $output = "CSP {\n";
+    foreach($this->constraints as $clause) {
+      $output .= "\t[";
+      foreach($clause as $ineq)
+        $output .= $ineq."; ";
+      $output .= "],\n";
+    }
+    return $output."}\n";
+  }
 }
