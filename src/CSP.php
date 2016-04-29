@@ -33,6 +33,7 @@ class CSP {
 
   /**
    * Parses a string expression in CSP object
+   * Ex: " x  0  2  y  0  2  [x-y<=-1  -x+y<=-1]  [x+y<=0] "
    * @param string $expression
    * @return CSP
    */
@@ -50,17 +51,23 @@ class CSP {
     }
 
     /* Parse inequations */
+    $constraints = array();
     $expression = preg_replace($varPattern, "", $expression);
-    $inequations = array();
-    $split = preg_split("/\s+/", $expression, null, PREG_SPLIT_NO_EMPTY);
+    $clausePattern = "/\[[^\[]+\]/";
+    $clauses = array();
+    preg_match_all($clausePattern, $expression, $clauses);
     try {
-      foreach ($split as $ineqExpression)
-        $inequations[] = Inequation::parseExpression($ineqExpression,$vars);
+      foreach ($clauses[0] as $clause) {
+        $inequations = array();
+        $clause = preg_split("/\s+/", preg_replace(["/\[/", "/\]/"], "", $clause), null, PREG_SPLIT_NO_EMPTY);
+        foreach ($clause as $ineqExpression)
+          $inequations[] = Inequation::parseExpression($ineqExpression,$vars);
+        $constraints[] = $inequations;
+      }
     } catch (Exception $e) {
       die($e->getMessage());
     }
-
-    return new CSP($vars,$inequations);
+    return new CSP($vars,$constraints);
   }
 
   /**
