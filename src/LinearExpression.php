@@ -35,7 +35,7 @@ class LinearExpression {
    * Parses a string expression in LinearTerm objects
    * @param string $expression
    * @param array of IntegerVarible $vars
-   * @return array of LinearTerm
+   * @return array of LinearTerm | throw
    */
   public static function parseExpression($expression, $vars) {
     $terms = array();
@@ -60,7 +60,7 @@ class LinearExpression {
 
   /**
    * Gives the term at the rank $index
-   * @return LinearTerm
+   * @return LinearTerm | throw
    */
   public function getTerm($index) {
     if($index >= $this->getNumberOfTerms() || $index < 0) throw new Exception("LinearExpression object : invalid index given.");

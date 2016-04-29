@@ -24,35 +24,6 @@ class Encoder {
   }
 
   /**
-   * Substitutes primitive comparision by boolean variables
-   * E.g. : 'x <= c' is replaced by 'p(x,c)'
-   * Referring to the a. part of 'Encodage' part
-   * @return array of array of string
-   */
-  public function substitutions() {
-  	$predicates = array();
-  	try {
-		foreach ($this->csp->getClauses() as $clauses)
-	  		foreach($clauses->getFNC() as $clause) {
-	  			$predicate = array();
-	  			foreach($clause as $pc) {
-		  			$x = $pc->getLinearExpression()->getTerm(0)->getVar()->getName();
-		  			$c = $pc->getConst();
-		  			$sign = $pc->getSign();
-		  			$predicate[] = ( $sign ? "" : "-")."p(".$x.",".$c.")";
-		  			/* TODO
-		  			 * check if 'p' is not expended yet
-		  			 */
-		  		}
-		  		$predicates[] = $predicate ;
-		  	}
-  	} catch (Exception $e) {
-  		throw $e ;
-  	}
-  	return $predicates;
-  }
-
-  /**
    * Determines the bounds axioms
    * Referring to the b. part , particularly the 8th definition
    * @return array of array of string
@@ -69,8 +40,8 @@ class Encoder {
   }
 
   /**
-   * Gives a sort of SAT representation of the CSP
-   * @return array of array of string
+   * Gives the SAT representation of the CSP
+   * @return SAT
    */
   public function encode() {
   	return array_merge($this->substitutions(), $this->bounds());

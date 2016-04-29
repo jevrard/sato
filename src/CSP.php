@@ -24,7 +24,7 @@ class CSP {
   /**
    * Initializes internal state of CSP object.
    * @param array of IntegerVariable $setV
-   * @param array of Inequation $setS
+   * @param array of array of Inequation $setS
    */
   public function __construct($setV, $setS) {
     $this->variables = $setV;
@@ -71,27 +71,51 @@ class CSP {
   }
 
   /**
+   * Computes the boolean variables compound FNC of a clause at the rank $index
+   * Adds in $predicates all new created predicates
+   * Referring to the 9th definition
+   * @return array of string
+   */
+  private function computeClauseFNC($index, &$predicates) {
+    $clauseFNC = array(array());
+    $c = $this->constraints[$index];
+    for($i=0; $i<count($c); $i++) {
+      $q = "q".$index.$i;
+      $clauseFNC[0][] = $q;
+      $predicates[] = $q;
+      $literalFNC = $c[$i]->computeFNC();
+      foreach($literalFNC as &$clause) {
+        /* substitutes primitive comparison by boolean variable */
+        foreach($clause as $key => $ineq) {
+          $clause[$key] = $ineq->predicateEquivalent();
+          $predicates[] = preg_replace("/^-/", "", $clause[$key]);
+        }
+        $clauseFNC[] = array_merge(["-".$q], $clause);
+      }
+    }
+    $predicates = array_unique($predicates);
+    return $clauseFNC;
+  }
+
+  /**
+   * Computes the global FNC of the $constraints
+   * Adds in $predicates all new created predicates
+   * Referring to the 10th definition
+   * @return array of array of string
+   */
+  public function computeGlobalFNC(&$predicates) {
+    $globalFNC = array();
+    for($i=0; $i<count($this->constraints); $i++)
+      $globalFNC = array_merge($globalFNC, $this->computeClauseFNC($i, $predicates));
+    return $globalFNC;
+  }
+
+  /**
    * Gives the set of integer variables
    * @return array of IntegerVariables
    */
    public function getVariables(){
   	return $this->variables ;
-  }
-
-  /**
-   * Gives the constraints
-   * @return array of array of Inequation
-   */
-  public function getConstraints(){
-  	return $this->constraints;
-  }
-
-  /**
-   * Gives the clause at the rank $index
-   * @return array of Inequation
-   */
-  public function getClause($index){
-  	return $this->constraints[$index];
   }
 
   /**

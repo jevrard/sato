@@ -20,6 +20,7 @@ class Inequation {
    * @var int
    */
   private $const;
+
   /**
    * Logical sign of the Inequation object
    * i.e. 0 is negative form, 1 is positive form (default)
@@ -43,7 +44,7 @@ class Inequation {
    * Parses a string expression in Inequation objects
    * @param string $expression
    * @param array of IntegerVariable $vars
-   * @return Inequation
+   * @return Inequation | throw
    */
   public static function parseExpression($expression,$vars) {
     $expression = trim($expression);
@@ -55,30 +56,6 @@ class Inequation {
       throw $e;
     }
     return new Inequation($linearExpression,$split[1]);
-  }
-
-  /**
-   * Gives the linear expression of @this
-   * @return LinearExpression
-   */
-  public function getLinearE() {
-    return $this->linearE;
-  }
-
-  /**
-   * Gives the right-hand side of @this
-   * @return int
-   */
-  public function getConst() {
-    return $this->const;
-  }
-
-  /**
-   * Gives the sign of @this
-   * @return boolean
-   */
-  public function getSign() {
-    return $this->sign;
   }
 
   /**
@@ -94,21 +71,34 @@ class Inequation {
    * @return boolean
    */
   public function isPrimitiveComparison() {
-    return $this->isOneTerm() && $linearE->getTerm(0)->getCoeff() == 1 ;
+    return $this->isOneTerm() && $this->linearE->getTerm(0)->getCoeff() == 1 ;
   }
 
   /**
-   * Gives the FNC composed of primitive comparaisons (x <= c)
+   * Gives the predicate equivalent of the primitive comparaison
+   * i.e. transforms 'x <= c' into 'pxc'
+   * @return string | throw
+   */
+  public function predicateEquivalent() {
+    if(!$this->isPrimitiveComparison()) throw new Exception("Inequation object : impossible to make predicate equivalent on a non primitive comparaison.");
+    $sign = $this->sign ? "" : "-";
+    return $sign."p".$this->linearE->getTerm(0)->getVar()->getName().$this->const;
+  }
+
+  /**
+   * Computes the FNC composed of primitive comparaisons 'x <= c'
    * Corresponds to proposition 1
    * @return array of array of Inequation
    */
-  public function getFNC() {
+  public function computeFNC() {
     $fnc = array();
     $n = $this->linearE->getNumberOfTerms();
     $sum = $this->const-$n+1; //c-n+1
     $combinaisons = LinearExpression::computeCombinaisons($this->linearE->getTermsDomain(), array());
+    echo $this." : FNC = {\n";
     foreach($combinaisons as $combi) {
       if(array_sum($combi) != $sum) continue;
+      echo "\t[";
       $clause = array();
       for($i=0; $i<$n; $i++) {
         $term = $this->linearE->getTerm($i);
@@ -116,9 +106,12 @@ class Inequation {
         $ineq = new Inequation($expression, $combi[$i]);
         $ineq->hashTranslation();
         $clause[] = $ineq;
+        echo $ineq.";";
       }
       $fnc[] = $clause;
+      echo "],\n";
     }
+    echo "}\n";
     return $fnc;
   }
 

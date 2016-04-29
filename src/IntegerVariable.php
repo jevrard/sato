@@ -34,7 +34,7 @@ class IntegerVariable {
   /**
    * Parses a string expression in IntegerVariable objects
    * @param string $expression
-   * @return IntegerVariable
+   * @return IntegerVariable | throw
    */
   public static function parseExpression($expression) {
     $split = preg_split("/\s+/", $expression, null, PREG_SPLIT_NO_EMPTY);
