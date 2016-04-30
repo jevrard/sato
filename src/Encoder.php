@@ -28,12 +28,14 @@ class Encoder {
    * @return SAT
    */
   public function encode() {
-  	try {
-
+    $boolVars = array();
+    $orderRelations = array();
+    try {
+      $globalFNC = $this->csp->computeGlobalFNC($boolVars,$orderRelations);
   	} catch (Exception $e) {
-
+      die($e->getMessage());
   	}
-
+    return new SAT($boolVars, array_merge($globalFNC,$orderRelations));
   }
 
 }

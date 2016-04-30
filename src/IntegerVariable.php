@@ -75,7 +75,8 @@ class IntegerVariable {
   public function predicateBounds(&$boolVars) {
     $lower = "p".$this->name.($this->domain['l']-1);
     $upper = "p".$this->name.$this->domain['u'];
-    $boolVars = array_unique(array_merge($boolVars, [$lower, $upper]));
+    if(!in_array($lower, $boolVars)) $boolVars[] = $lower;
+    if(!in_array($upper, $boolVars)) $boolVars[] = $upper;
     return array(["-".$lower], [$upper]);
   }
 
@@ -91,7 +92,7 @@ class IntegerVariable {
    * Reseachs in array of IntegerVariable by a variable name
    * @param string $varName
    * @param array of IntegerVariable $vars
-   * @return IntegerVariable|boolean
+   * @return IntegerVariable | boolean
    */
   public static function varExistsInArray($varName, $vars) {
     foreach ($vars as $var)

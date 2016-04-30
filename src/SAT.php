@@ -8,24 +8,24 @@ class SAT {
 
   /**
    * Set of boolean variable names
-   * @var array
+   * @var array of string
    */
-  private $setB;
+  private $variables;
 
   /**
    * Set of clauses
-   * @var array
+   * @var array of array of string
    */
-  private $setS;
+  private $clauses;
 
   /**
    * Initializes internal state of SAT object.
-   * @param array $setB
-   * @param array $setS
+   * @param array of string $setB
+   * @param array of array of string $setS
    */
   public function __construct($setB, $setS) {
-    $this->setB = $setB;
-    $this->setS = $setS;
+    $this->variables = $setB;
+    $this->clauses = $setS;
   }
 
   /**
@@ -36,8 +36,8 @@ class SAT {
     $content = "c Created from SAT object\n";
     $content .= "c ".$comment."\n";
     $content .= "c\n";
-    $content .= "p cnf ".count($this->setB)." ".count($this->setS)."\n";
-    foreach($this->setS as $clause) {
+    $content .= "p cnf ".count($this->variables)." ".count($this->clauses)."\n";
+    foreach($this->clauses as $clause) {
       foreach($clause as $literal)
         try {
           $content .= $this->literalToNumber($literal)." ";
@@ -58,7 +58,7 @@ class SAT {
   private function literalToNumber($literal) {
     $sign = "";
     if(preg_match("/^-/", $literal)) $sign = "-";
-    return $sign.$this->getVarIndexNumber(preg_replace("/^-/", "", $literal));
+    return $sign.$this->varIndexNumber(preg_replace("/^-/", "", $literal));
   }
 
   /**
@@ -66,8 +66,25 @@ class SAT {
    * @param string $var
    * @return int | throw
    */
-  private function getVarIndexNumber($var) {
-    if(($key = array_search($var, $this->setB)) === false) throw new Exception("SAT object : Boolean variable $var does not exist in set B.\n");
+  private function varIndexNumber($var) {
+    if(($key = array_search($var, $this->variables)) === false) throw new Exception("SAT object : Boolean variable $var does not exist in set B.\n");
     return $key+1; // index number need to start at 1, not 0
+  }
+
+  /**
+   * Gives the string representation of @this
+   * @return string
+   */
+  public function __toString() {
+    $output = "SAT {\n";
+    foreach($this->clauses as $clause) {
+      $output .= "\t[";
+      foreach($clause as $ineq)
+        $output .= $ineq."; ";
+      $output .= "],\n";
+    }
+    $output .= "}\n";
+    $output .= "variables : ".implode(" ", $this->variables)."\n";
+    return $output;
   }
 }

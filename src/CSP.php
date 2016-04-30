@@ -78,7 +78,7 @@ class CSP {
    * @param int $index
    * @param array of string $boolVars
    * @param array of array of string $orderRelations
-   * @return array of string
+   * @return array of array of string
    */
   private function computeClauseFNC($index, &$boolVars, &$orderRelations) {
     $clauseFNC = array(array());

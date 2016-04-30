@@ -116,7 +116,10 @@ class Inequation {
     if(!$this->isPrimitiveComparison()) throw new Exception("Inequation object : impossible to make predicate order relation of a non primitive comparaison.");
     $varBounds = $this->linearE->getTerm(0)->getVar()->predicateBounds($boolVars);
     $varBounds[] = [$this->reverse()->predicateEquivalent(), $this->predicateEquivalent()];
-    $boolVars = array_unique(array_merge($boolVars, [$this->reverse()->booleanEquivalent(), $this->booleanEquivalent()]));
+    $boolThis = $this->booleanEquivalent();
+    $boolReverse = $this->reverse()->booleanEquivalent();
+    if(!in_array($boolThis, $boolVars)) $boolVars[] = $boolThis;
+    if(!in_array($boolReverse, $boolVars)) $boolVars[] = $boolReverse;
     return $varBounds;
   }
 
