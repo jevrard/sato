@@ -72,50 +72,49 @@ class CSP {
 
   /**
    * Computes the boolean variables compound FNC of a clause at the rank $index
-   * Adds in $predicates all new created predicates
+   * Adds in $boolVars all new boolean variables created
+   * Adds in $orderRelations the order relation of each primitive comparison
    * Referring to the 9th definition
+   * @param int $index
+   * @param array of string $boolVars
+   * @param array of array of string $orderRelations
    * @return array of string
    */
-  private function computeClauseFNC($index, &$predicates) {
+  private function computeClauseFNC($index, &$boolVars, &$orderRelations) {
     $clauseFNC = array(array());
     $c = $this->constraints[$index];
     for($i=0; $i<count($c); $i++) {
       $q = "q".$index.$i;
       $clauseFNC[0][] = $q;
-      $predicates[] = $q;
-      $literalFNC = $c[$i]->computeFNC();
+      $boolVars[] = $q;
+      $literalFNC = $c[$i]->computeFNC(); // called F_i in definition
       foreach($literalFNC as &$clause) {
-        /* substitutes primitive comparison by boolean variable */
+        /* substitutes primitive comparison by a predicate */
         foreach($clause as $key => $ineq) {
           $clause[$key] = $ineq->predicateEquivalent();
-          $predicates[] = preg_replace("/^-/", "", $clause[$key]);
+          $orderRelations = array_merge($orderRelations, $ineq->predicateOrderRelation($boolVars));
         }
         $clauseFNC[] = array_merge(["-".$q], $clause);
       }
     }
-    $predicates = array_unique($predicates);
+    $orderRelations = array_unique($orderRelations, SORT_REGULAR); // removes duplicated clauses
     return $clauseFNC;
   }
 
   /**
    * Computes the global FNC of the $constraints
-   * Adds in $predicates all new created predicates
+   * Adds in $boolVars all new boolean variables created
+   * Adds in $orderRelations the order relation of each primitive comparison
    * Referring to the 10th definition
+   * @param array of string $boolVars
+   * @param array of array of string $orderRelations
    * @return array of array of string
    */
-  public function computeGlobalFNC(&$predicates) {
+  public function computeGlobalFNC(&$boolVars, &$orderRelations) {
     $globalFNC = array();
     for($i=0; $i<count($this->constraints); $i++)
-      $globalFNC = array_merge($globalFNC, $this->computeClauseFNC($i, $predicates));
+      $globalFNC = array_merge($globalFNC, $this->computeClauseFNC($i, $boolVars, $orderRelations));
     return $globalFNC;
-  }
-
-  /**
-   * Gives the set of integer variables
-   * @return array of IntegerVariables
-   */
-   public function getVariables(){
-  	return $this->variables ;
   }
 
   /**

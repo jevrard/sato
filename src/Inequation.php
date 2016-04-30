@@ -75,14 +75,49 @@ class Inequation {
   }
 
   /**
-   * Gives the predicate equivalent of the primitive comparaison
+   * Gives the reverse of the primitive comparaison
+   * i.e. transforms 'x <= c' into '-(x <= c-1)' (means 'x > c')
+   * @return Inequation | throw
+   */
+  public function reverse() {
+    if(!$this->isPrimitiveComparison()) throw new Exception("Inequation object : impossible to reverse a non primitive comparaison.");
+    return new Inequation($this->linearE, $this->const-1, abs($this->sign-1));
+  }
+
+  /**
+   * Gives the boolean equivalent of the primitive comparaison (without $sign)
    * i.e. transforms 'x <= c' into 'pxc'
    * @return string | throw
    */
+  public function booleanEquivalent() {
+    if(!$this->isPrimitiveComparison()) throw new Exception("Inequation object : impossible to make boolean equivalent of a non primitive comparaison.");
+    return "p".$this->linearE->getTerm(0)->getVar()->getName().$this->const;
+  }
+
+  /**
+   * Gives the predicate equivalent of the primitive comparaison (with $sign)
+   * i.e. transforms '-(x <= c)' into '-pxc'
+   * @return string | throw
+   */
   public function predicateEquivalent() {
-    if(!$this->isPrimitiveComparison()) throw new Exception("Inequation object : impossible to make predicate equivalent on a non primitive comparaison.");
+    if(!$this->isPrimitiveComparison()) throw new Exception("Inequation object : impossible to make predicate equivalent of a non primitive comparaison.");
     $sign = $this->sign ? "" : "-";
-    return $sign."p".$this->linearE->getTerm(0)->getVar()->getName().$this->const;
+    return $sign.$this->booleanEquivalent();
+  }
+
+  /**
+   * Gives the predicate order relation
+   * Referring to the 8th definition
+   * Adds in $boolVars all new boolean variables created
+   * @param array of string $boolVars
+   * @return array of array string
+   */
+  public function predicateOrderRelation(&$boolVars) {
+    if(!$this->isPrimitiveComparison()) throw new Exception("Inequation object : impossible to make predicate order relation of a non primitive comparaison.");
+    $varBounds = $this->linearE->getTerm(0)->getVar()->predicateBounds($boolVars);
+    $varBounds[] = [$this->reverse()->predicateEquivalent(), $this->predicateEquivalent()];
+    $boolVars = array_unique(array_merge($boolVars, [$this->reverse()->booleanEquivalent(), $this->booleanEquivalent()]));
+    return $varBounds;
   }
 
   /**

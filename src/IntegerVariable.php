@@ -67,6 +67,19 @@ class IntegerVariable {
   }
 
   /**
+   * Gives the predicate bounds of the integer variable
+   * Adds in $boolVars all new boolean variables created
+   * @param array of string $boolVars
+   * @return array of array of string
+   */
+  public function predicateBounds(&$boolVars) {
+    $lower = "p".$this->name.($this->domain['l']-1);
+    $upper = "p".$this->name.$this->domain['u'];
+    $boolVars = array_unique(array_merge($boolVars, [$lower, $upper]));
+    return array(["-".$lower], [$upper]);
+  }
+
+  /**
    * Compares two IntegerVariable objetcs
    * @return boolean
    */
