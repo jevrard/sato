@@ -51,14 +51,23 @@ class SAT {
   }
 
   /**
+   * Transforms a number into a literal
+   * @param int $number
+   * @return string | throw
+   */
+  public function literalFromNumber($number) {
+    return $this->variables[abs($number)-1];
+  }
+
+  /**
    * Transforms a literal into a number for dimacs file
    * @param string $filename
-   * @return string | throw
+   * @return int | throw
    */
   private function literalToNumber($literal) {
     $sign = "";
     if(preg_match("/^-/", $literal)) $sign = "-";
-    return $sign.$this->varIndexNumber(preg_replace("/^-/", "", $literal));
+    return (int)($sign.$this->varIndexNumber(preg_replace("/^-/", "", $literal)));
   }
 
   /**

@@ -49,8 +49,9 @@ echo "\n";
 /* Use of the SAT solver */
 $command = escapeshellcmd("./glucose-syrup/simp/glucose_static $dimacsFilePath $outputFilePath");
 $output = shell_exec($command);
-echo $output;
+echo $output."\n";
 
+$encoder->interprete($outputFilePath);
 
 /* functions */
 function printDoc() {
