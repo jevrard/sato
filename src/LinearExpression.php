@@ -17,25 +17,25 @@ class LinearExpression {
 
   /**
    * Integer variables of the expression
-   * @var array of IntegerVar
+   * @var array of IntegerVariable
    */
-  private $vars;
+  private $variables;
 
   /**
    * Initializes internal state of LinearExpression object.
    * @param array of LinearTerm $expression
-   * @param array of IntegerVar $vars
+   * @param array of IntegerVariable $vars
    */
   public function __construct($terms, $vars) {
     $this->terms = $terms;
-    $this->vars = $vars;
+    $this->variables = $vars;
   }
 
   /**
    * Parses a string expression in LinearTerm objects
    * @param string $expression
-   * @param array of IntegerVaribles $vars
-   * @return array of LinearTerm
+   * @param array of IntegerVarible $vars
+   * @return array of LinearTerm | throw
    */
   public static function parseExpression($expression, $vars) {
     $terms = array();
@@ -59,8 +59,8 @@ class LinearExpression {
   }
 
   /**
-   * Gives the term at the $index rank
-   * @return LinearTerm
+   * Gives the term at the rank $index
+   * @return LinearTerm | throw
    */
   public function getTerm($index) {
     if($index >= $this->getNumberOfTerms() || $index < 0) throw new Exception("LinearExpression object : invalid index given.");

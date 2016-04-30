@@ -34,7 +34,7 @@ class IntegerVariable {
   /**
    * Parses a string expression in IntegerVariable objects
    * @param string $expression
-   * @return IntegerVariable
+   * @return IntegerVariable | throw
    */
   public static function parseExpression($expression) {
     $split = preg_split("/\s+/", $expression, null, PREG_SPLIT_NO_EMPTY);
@@ -67,6 +67,20 @@ class IntegerVariable {
   }
 
   /**
+   * Gives the predicate bounds of the integer variable
+   * Adds in $boolVars all new boolean variables created
+   * @param array of string $boolVars
+   * @return array of array of string
+   */
+  public function predicateBounds(&$boolVars) {
+    $lower = "p".$this->name.($this->domain['l']-1);
+    $upper = "p".$this->name.$this->domain['u'];
+    if(!in_array($lower, $boolVars)) $boolVars[] = $lower;
+    if(!in_array($upper, $boolVars)) $boolVars[] = $upper;
+    return array(["-".$lower], [$upper]);
+  }
+
+  /**
    * Compares two IntegerVariable objetcs
    * @return boolean
    */
@@ -78,7 +92,7 @@ class IntegerVariable {
    * Reseachs in array of IntegerVariable by a variable name
    * @param string $varName
    * @param array of IntegerVariable $vars
-   * @return IntegerVariable|boolean
+   * @return IntegerVariable | boolean
    */
   public static function varExistsInArray($varName, $vars) {
     foreach ($vars as $var)

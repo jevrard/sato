@@ -1,6 +1,6 @@
 <?php
-require_once 'src/SAT.php';
-require_once 'src/CSP.php';
+require_once 'SAT.php';
+require_once 'CSP.php';
 
 /**
  * Encodes CSP into SAT problem
@@ -22,4 +22,20 @@ class Encoder {
   public function __construct(CSP $csp) {
     $this->csp = $csp;
   }
+
+  /**
+   * Gives the SAT representation of the CSP
+   * @return SAT
+   */
+  public function encode() {
+    $boolVars = array();
+    $orderRelations = array();
+    try {
+      $globalFNC = $this->csp->computeGlobalFNC($boolVars,$orderRelations);
+  	} catch (Exception $e) {
+      die($e->getMessage());
+  	}
+    return new SAT($boolVars, array_merge($globalFNC,$orderRelations));
+  }
+
 }

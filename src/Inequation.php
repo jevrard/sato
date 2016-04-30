@@ -20,6 +20,7 @@ class Inequation {
    * @var int
    */
   private $const;
+
   /**
    * Logical sign of the Inequation object
    * i.e. 0 is negative form, 1 is positive form (default)
@@ -43,7 +44,7 @@ class Inequation {
    * Parses a string expression in Inequation objects
    * @param string $expression
    * @param array of IntegerVariable $vars
-   * @return Inequation
+   * @return Inequation | throw
    */
   public static function parseExpression($expression,$vars) {
     $expression = trim($expression);
@@ -70,21 +71,72 @@ class Inequation {
    * @return boolean
    */
   public function isPrimitiveComparison() {
-    return $this->isOneTerm() && $linearE->getTerm(0)->getCoeff() == 1 ;
+    return $this->isOneTerm() && $this->linearE->getTerm(0)->getCoeff() == 1 ;
   }
 
   /**
-   * Gives the FNC composed of primitive comparaisons (x <= c)
+   * Gives the reverse of the primitive comparaison
+   * i.e. transforms 'x <= c' into '-(x <= c-1)' (means 'x > c')
+   * @return Inequation | throw
+   */
+  public function reverse() {
+    if(!$this->isPrimitiveComparison()) throw new Exception("Inequation object : impossible to reverse a non primitive comparaison.");
+    return new Inequation($this->linearE, $this->const-1, abs($this->sign-1));
+  }
+
+  /**
+   * Gives the boolean equivalent of the primitive comparaison (without $sign)
+   * i.e. transforms 'x <= c' into 'pxc'
+   * @return string | throw
+   */
+  public function booleanEquivalent() {
+    if(!$this->isPrimitiveComparison()) throw new Exception("Inequation object : impossible to make boolean equivalent of a non primitive comparaison.");
+    return "p".$this->linearE->getTerm(0)->getVar()->getName().$this->const;
+  }
+
+  /**
+   * Gives the predicate equivalent of the primitive comparaison (with $sign)
+   * i.e. transforms '-(x <= c)' into '-pxc'
+   * @return string | throw
+   */
+  public function predicateEquivalent() {
+    if(!$this->isPrimitiveComparison()) throw new Exception("Inequation object : impossible to make predicate equivalent of a non primitive comparaison.");
+    $sign = $this->sign ? "" : "-";
+    return $sign.$this->booleanEquivalent();
+  }
+
+  /**
+   * Gives the predicate order relation
+   * Referring to the 8th definition
+   * Adds in $boolVars all new boolean variables created
+   * @param array of string $boolVars
+   * @return array of array string
+   */
+  public function predicateOrderRelation(&$boolVars) {
+    if(!$this->isPrimitiveComparison()) throw new Exception("Inequation object : impossible to make predicate order relation of a non primitive comparaison.");
+    $varBounds = $this->linearE->getTerm(0)->getVar()->predicateBounds($boolVars);
+    $varBounds[] = [$this->reverse()->predicateEquivalent(), $this->predicateEquivalent()];
+    $boolThis = $this->booleanEquivalent();
+    $boolReverse = $this->reverse()->booleanEquivalent();
+    if(!in_array($boolThis, $boolVars)) $boolVars[] = $boolThis;
+    if(!in_array($boolReverse, $boolVars)) $boolVars[] = $boolReverse;
+    return $varBounds;
+  }
+
+  /**
+   * Computes the FNC composed of primitive comparaisons 'x <= c'
    * Corresponds to proposition 1
    * @return array of array of Inequation
    */
-  public function getFNC() {
+  public function computeFNC() {
     $fnc = array();
     $n = $this->linearE->getNumberOfTerms();
     $sum = $this->const-$n+1; //c-n+1
     $combinaisons = LinearExpression::computeCombinaisons($this->linearE->getTermsDomain(), array());
+    echo $this." : FNC = {\n";
     foreach($combinaisons as $combi) {
       if(array_sum($combi) != $sum) continue;
+      echo "\t[";
       $clause = array();
       for($i=0; $i<$n; $i++) {
         $term = $this->linearE->getTerm($i);
@@ -92,9 +144,12 @@ class Inequation {
         $ineq = new Inequation($expression, $combi[$i]);
         $ineq->hashTranslation();
         $clause[] = $ineq;
+        echo $ineq.";";
       }
       $fnc[] = $clause;
+      echo "],\n";
     }
+    echo "}\n";
     return $fnc;
   }
 
