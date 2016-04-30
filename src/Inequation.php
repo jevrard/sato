@@ -149,7 +149,7 @@ class Inequation {
       $fnc[] = $clause;
       echo "],\n";
     }
-    echo "}\n";
+    echo "}\n\n";
     return $fnc;
   }
 

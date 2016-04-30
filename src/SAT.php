@@ -84,7 +84,7 @@ class SAT {
       $output .= "],\n";
     }
     $output .= "}\n";
-    $output .= "variables : ".implode(" ", $this->variables)."\n";
+    $output .= "variables : ".implode(" ", $this->variables)."\n\n";
     return $output;
   }
 }

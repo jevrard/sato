@@ -129,6 +129,6 @@ class CSP {
         $output .= $ineq."; ";
       $output .= "],\n";
     }
-    return $output."}\n";
+    return $output."}\n\n";
   }
 }
