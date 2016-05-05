@@ -54,9 +54,11 @@ class Encoder {
     if(!$this->sat) die("Cannot interprete a result if the SAT problem does not exist.");
     $content = explode(" ", file_get_contents($filePath));
     unset($content[count($content)-1]); // removes end line 0
-    if(empty($content)) die("The SAT problem is unsatisfiable.\n");
+    if(empty($content)) die("--> The SAT problem is unsatisfiable.\n");
     $booleanValues = array();
     foreach ($content as $value)
       $booleanValues[$this->sat->literalFromNumber($value)] = $value < 0 ? "0" : "1";
+    echo "--> Interpretation of the solver SAT's result :\n";
+    print_r($booleanValues);
   }
 }
