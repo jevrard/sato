@@ -2,8 +2,8 @@
 <?php
 require_once 'src/Encoder.php';
 
-echo "-- Project SATO using glucose 4.0 based on MiniSAT --\n";
-echo "-- Mariam Bouzid and Justine Evrard --\n\n";
+echo "\n-- Project SATO using glucose 4.0 based on MiniSAT --\n";
+echo "-- Mariam Bouzid & Justine Evrard --\n\n";
 
 unset($argv[0]);
 
@@ -76,6 +76,7 @@ USAGE EXAMPLES:
   ./sato.php x 0 2 y 0 2 ['x-y<=-1' '-x+y<=-1'] ['x+y<=7']
   ./sato.php x 0 2 y 0 2 ['x-y<=-1' '-x+y<=-1']
   ./sato.php x 2 6 y 2 6 ['x+y<=7']
+  ./sato.php x 0 2 y 0 2 ['-x+y<=-3']
 
 AVAILABLE OPTIONS:
   -h or --help : display this documentation
