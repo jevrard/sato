@@ -51,8 +51,8 @@ class LinearExpression {
         $coeff = -1;
         $x = preg_replace("/^-/", "", $term);
       }
-      if($coeff == 0) throw new Exception("LinearExpression class : coefficient cannot equal 0.");
-      if(!$var = IntegerVariable::varExistsInArray($x, $vars)) throw new Exception("LinearExpression class : variable $x in expression is not in the array of variables.");
+      if($coeff === 0) throw new Exception("LinearExpression class : coefficient cannot equal 0.\n");
+      if(!$var = IntegerVariable::varExistsInArray($x, $vars)) throw new Exception("LinearExpression class : variable $x in expression is not in the array of variables.\n");
       $terms[] = new LinearTerm($var, $coeff);
     }
     return new LinearExpression($terms, $vars);
@@ -63,7 +63,7 @@ class LinearExpression {
    * @return LinearTerm | throw
    */
   public function getTerm($index) {
-    if($index >= $this->getNumberOfTerms() || $index < 0) throw new Exception("LinearExpression object : invalid index given.");
+    if(!in_array($index, array_keys($this->terms))) throw new Exception("LinearExpression object : invalid index given.\n");
     return $this->terms[$index];
   }
 

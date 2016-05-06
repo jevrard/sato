@@ -45,12 +45,16 @@ if(($key = array_search("-c", $argv)) !== false) {
 
 /* Create the SAT problem from the CSP */
 $argv = " ".implode("  ", $argv)." ";
-$csp = CSP::parseExpression($argv);
-echo $csp;
-$encoder = new Encoder($csp);
-$sat = $encoder->encode();
-echo $sat;
-$sat->exportToDimacs($dimacsFilePath, $comment);
+try {
+  $csp = CSP::parseExpression($argv);
+  echo $csp;
+  $encoder = new Encoder($csp);
+  $sat = $encoder->encode();
+  echo $sat;
+  $sat->exportToDimacs($dimacsFilePath, $comment);
+} catch (Exception $e) {
+  die($e->getMessage());
+}
 echo "\n";
 
 /* Use of the SAT solver */
@@ -58,7 +62,11 @@ $command = escapeshellcmd("./glucose-syrup/simp/glucose_static $dimacsFilePath $
 $output = shell_exec($command);
 if($verbose) echo $output."\n";
 
-$encoder->interprete($outputFilePath);
+try {
+  $encoder->interprete($outputFilePath);
+} catch (Exception $e) {
+  die($e->getMessage());
+}
 
 /* functions */
 function printDoc() {

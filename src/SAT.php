@@ -42,8 +42,7 @@ class SAT {
         try {
           $content .= $this->literalToNumber($literal)." ";
         } catch (Exception $e) {
-          echo $e->getMessage();
-          die("SAT object : SAT problem cannot be exported. Check your problem !\n");
+          throw new Exception($e->getMessage()."SAT object : SAT problem cannot be exported.\n");
         }
       $content .= "0\n";
     }

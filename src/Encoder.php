@@ -40,7 +40,7 @@ class Encoder {
     try {
       $globalFNC = $this->csp->computeGlobalFNC($boolVars,$orderRelations);
   	} catch (Exception $e) {
-      die($e->getMessage());
+      throw new Exception($e->getMessage()."Encoder class : cannot encode CSP.\n");
   	}
     $this->sat = new SAT($boolVars, array_merge($globalFNC,$orderRelations));
     return $this->sat;
@@ -51,10 +51,10 @@ class Encoder {
    * @param string $filePath
    */
   public function interprete($filePath) {
-    if(!$this->sat) die("Cannot interprete a result if the SAT problem does not exist.");
+    if(!$this->sat) throw new Exception("Cannot interprete a result if the SAT problem does not exist.\n");
     $content = explode(" ", file_get_contents($filePath));
     unset($content[count($content)-1]); // removes end line 0
-    if(empty($content)) die("--> The SAT problem is unsatisfiable.\n");
+    if(empty($content)) throw new Exception("--> The SAT problem is unsatisfiable.\n");
     $booleanValues = array();
     foreach ($content as $value)
       $booleanValues[$this->sat->literalFromNumber($value)] = $value < 0 ? "0" : "1";

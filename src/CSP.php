@@ -1,4 +1,3 @@
-
 <?php
 require_once 'Inequation.php';
 
@@ -47,7 +46,7 @@ class CSP {
       foreach ($varMatches[0] as $varExpression)
         $vars[] = IntegerVariable::parseExpression($varExpression);
     } catch (Exception $e) {
-      die($e->getMessage());
+      throw new Exception($e->getMessage()."CSP class : cannot parse expression.\n");
     }
 
     /* Parse inequations */
@@ -65,7 +64,7 @@ class CSP {
         $constraints[] = $inequations;
       }
     } catch (Exception $e) {
-      die($e->getMessage());
+      throw new Exception($e->getMessage()."CSP class : cannot parse expression.\n");
     }
     return new CSP($vars,$constraints);
   }
@@ -90,9 +89,9 @@ class CSP {
       $literalFNC = $c[$i]->computeFNC(); // called F_i in definition
       foreach($literalFNC as &$clause) {
         /* substitutes primitive comparison by a predicate */
-        foreach($clause as $key => $ineq) {
-          $clause[$key] = $ineq->predicateEquivalent();
-          $orderRelations = array_merge($orderRelations, $ineq->predicateOrderRelation($boolVars));
+        foreach($clause as $key => $primComp) {
+          $clause[$key] = $primComp->predicateEquivalent();
+          $orderRelations = array_merge($orderRelations, $primComp->predicateOrderRelation($boolVars));
         }
         $clauseFNC[] = array_merge(["-".$q], $clause);
       }
