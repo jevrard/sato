@@ -4,46 +4,48 @@ require_once 'IntegerVariable.php';
 /**
  * Represents a linear term
  * Form: a.x where a is a non null relative coefficient and x an integer variable
- * @author Justine Evrard
- * @author Mariam Bouzid
+ * @author Justine Evrard & Mariam Bouzid
  */
-class LinearTerm {
-
+class LinearTerm
+{
   /**
-   * Integer variable
-   * @var IntegerVariable
+   * @var IntegerVariable  Integer variable
+   * @var int              Non null relative coefficient (!=0)
    */
-  private $var;
-
-  /**
-   * Non null relative coefficient (!=0)
-   * @var int
-   */
-  private $coeff;
+  private $var, $coeff;
 
   /**
    * Initializes internal state of LinearTerm object
    * @param IntegerVariable $var
    * @param int $coeff
    */
-  public function __construct(IntegerVariable $var, $coeff) {
+  public function __construct(IntegerVariable $var, $coeff)
+  {
     $this->var = $var;
     $this->coeff = (int) $coeff;
   }
 
   /**
-   * Gives the term's integer variable
-   * @return IntegerVariable
+   * Gives the string representation of @this
+   * @return string
    */
-  public function getVar() {
-    return $this->var;
+  public function __toString()
+  {
+    switch ($this->coeff) {
+      case 1: return "".$this->var;
+      case -1: return "(-".$this->var.")";
+      default:
+        if ($this->coeff > 0) return $this->coeff.$this->var;
+        else return "(".$this->coeff.$this->var.")";
+    }
   }
 
   /**
    * Gives the term's coefficient
    * @return int
    */
-  public function getCoeff() {
+  public function getCoeff()
+  {
     return $this->coeff;
   }
 
@@ -51,8 +53,9 @@ class LinearTerm {
    * Gives the lower bound of the term
    * @return int
    */
-  public function getLowerBound() {
-    if($this->coeff > 0) return $this->coeff*$this->var->getLowerBound();
+  public function getLowerBound()
+  {
+    if ($this->coeff > 0) return $this->coeff*$this->var->getLowerBound();
     else return $this->coeff*$this->var->getUpperBound();
   }
 
@@ -60,30 +63,18 @@ class LinearTerm {
    * Gives the upper bound of the term
    * @return int
    */
-  public function getUpperBound() {
-    if($this->coeff > 0) return $this->coeff*$this->var->getUpperBound();
+  public function getUpperBound()
+  {
+    if ($this->coeff > 0) return $this->coeff*$this->var->getUpperBound();
     else return $this->coeff*$this->var->getLowerBound();
   }
 
   /**
-   * Compares two LinearTerm objetcs
-   * @return boolean
+   * Gives the term's integer variable
+   * @return IntegerVariable
    */
-  public function equal(LinearTerm $term) {
-    return $this->coeff == $term->coeff && $this->var->equal($term->var);
-  }
-
-  /**
-   * Gives the string representation of @this
-   * @return string
-   */
-  public function __toString() {
-    switch($this->coeff) {
-      case 1: return "".$this->var;
-      case -1: return "(-".$this->var.")";
-      default:
-        if($this->coeff > 0) return $this->coeff.$this->var;
-        else return "(".$this->coeff.$this->var.")";
-    }
+  public function getVar()
+  {
+    return $this->var;
   }
 }
