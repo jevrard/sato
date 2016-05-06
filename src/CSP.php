@@ -39,7 +39,7 @@ class CSP {
    */
   public static function parseExpression($expression) {
     /* Parse integer variables with domains */
-    $varPattern = "/\s[a-z]\w*\s\s\d+\s\s\d+\s/i";
+    $varPattern = "/\s[a-z]\w*\s\s\-?\d+\s\s\-?\d+\s/i";
     $varMatches = array();
     preg_match_all($varPattern, $expression, $varMatches);
     $vars = array();

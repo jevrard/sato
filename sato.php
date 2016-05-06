@@ -2,7 +2,7 @@
 <?php
 require_once 'src/Encoder.php';
 
-echo "-- Program sato.php using glucose 4.0 based on MiniSAT --\n";
+echo "-- Project SATO using glucose 4.0 based on MiniSAT --\n";
 echo "-- Mariam Bouzid and Justine Evrard --\n\n";
 
 unset($argv[0]);

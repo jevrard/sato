@@ -55,7 +55,7 @@ class Inequation {
     } catch (Exception $e) {
       throw $e;
     }
-    return new Inequation($linearExpression,$split[1]);
+    return new Inequation($linearExpression, (int)$split[1]);
   }
 
   /**
@@ -133,7 +133,7 @@ class Inequation {
     $n = $this->linearE->getNumberOfTerms();
     $sum = $this->const-$n+1; //c-n+1
     $combinaisons = LinearExpression::computeCombinaisons($this->linearE->getTermsDomain(), array());
-    echo $this." : FNC = {\n";
+    echo $this." {\n";
     foreach($combinaisons as $combi) {
       if(array_sum($combi) != $sum) continue;
       echo "\t[";
