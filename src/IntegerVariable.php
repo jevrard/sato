@@ -67,25 +67,36 @@ class IntegerVariable {
   }
 
   /**
-   * Gives the predicate bounds of the integer variable
+   * Gives the integer variable's bounds composed of predicates
    * Adds in $boolVars all new boolean variables created
    * @param array of string $boolVars
    * @return array of array of string
    */
   public function predicateBounds(&$boolVars) {
-    $lower = "p".$this->name.($this->domain['l']-1);
-    $upper = "p".$this->name.$this->domain['u'];
-    if(!in_array($lower, $boolVars)) $boolVars[] = $lower;
-    if(!in_array($upper, $boolVars)) $boolVars[] = $upper;
-    return array(["-".$lower], [$upper]);
+    $lower = new PrimitiveComparison($this, $this->domain['l']-1, 0);
+    $upper = new PrimitiveComparison($this, $this->domain['u']);
+    if(!in_array($lower->booleanEquivalent(), $boolVars)) $boolVars[] = $lower->booleanEquivalent();
+    if(!in_array($upper->booleanEquivalent(), $boolVars)) $boolVars[] = $upper->booleanEquivalent();
+    return array([$lower->predicateEquivalent()], [$upper->predicateEquivalent()]);
   }
 
   /**
-   * Compares two IntegerVariable objetcs
-   * @return boolean
+   * Gives the integer variable's order relation composed of predicates
+   * Referring to the 8th definition
+   * Adds in $boolVars all new boolean variables created
+   * @param array of string $boolVars
+   * @return array of array string
    */
-  public function equal(IntegerVariable $intVar) {
-    return $this->name == $intVar->name && $this->domain['l'] == $intVar->domain['l'] && $this->domain['u'] == $intVar->domain['u'];
+  public function predicateOrderRelation(&$boolVars) {
+    $relation = array();
+    for($i=$this->domain['l']; $i<=$this->domain['u']; $i++) {
+      $lower = new PrimitiveComparison($this, $i-1, 0);
+      $upper = new PrimitiveComparison($this, $i);
+      if(!in_array($lower->booleanEquivalent(), $boolVars)) $boolVars[] = $lower->booleanEquivalent();
+      if(!in_array($upper->booleanEquivalent(), $boolVars)) $boolVars[] = $upper->booleanEquivalent();
+      $relation[] = [$lower->predicateEquivalent(), $upper->predicateEquivalent()];
+    }
+    return $relation;
   }
 
   /**

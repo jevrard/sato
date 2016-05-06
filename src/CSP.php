@@ -76,10 +76,9 @@ class CSP {
    * Referring to the 9th definition
    * @param int $index
    * @param array of string $boolVars
-   * @param array of array of string $orderRelations
    * @return array of array of string
    */
-  private function computeClauseFNC($index, &$boolVars, &$orderRelations) {
+  private function computeClauseFNC($index, &$boolVars) {
     $clauseFNC = array(array());
     $c = $this->constraints[$index];
     for($i=0; $i<count($c); $i++) {
@@ -89,14 +88,11 @@ class CSP {
       $literalFNC = $c[$i]->computeFNC(); // called F_i in definition
       foreach($literalFNC as &$clause) {
         /* substitutes primitive comparison by a predicate */
-        foreach($clause as $key => $primComp) {
+        foreach($clause as $key => $primComp)
           $clause[$key] = $primComp->predicateEquivalent();
-          $orderRelations = array_merge($orderRelations, $primComp->predicateOrderRelation($boolVars));
-        }
         $clauseFNC[] = array_merge(["-".$q], $clause);
       }
     }
-    $orderRelations = array_unique($orderRelations, SORT_REGULAR); // removes duplicated clauses
     return $clauseFNC;
   }
 
@@ -106,14 +102,25 @@ class CSP {
    * Adds in $orderRelations the order relation of each primitive comparison
    * Referring to the 10th definition
    * @param array of string $boolVars
-   * @param array of array of string $orderRelations
    * @return array of array of string
    */
-  public function computeGlobalFNC(&$boolVars, &$orderRelations) {
+  public function computeGlobalFNC(&$boolVars) {
     $globalFNC = array();
     for($i=0; $i<count($this->constraints); $i++)
-      $globalFNC = array_merge($globalFNC, $this->computeClauseFNC($i, $boolVars, $orderRelations));
+      $globalFNC = array_merge($globalFNC, $this->computeClauseFNC($i, $boolVars));
     return $globalFNC;
+  }
+
+  /**
+   * Creates bound and order clauses used as axioms for each variable
+   * @param array of string $boolVars
+   * @return array of array of string
+   */
+  public function predicateOrderRelations(&$boolVars) {
+		$relations = array();
+		foreach($this->variables as $variable)
+      $relations = array_merge($relations, $variable->predicateBounds($boolVars), $variable->predicateOrderRelation($boolVars));
+		return $relations;
   }
 
   /**

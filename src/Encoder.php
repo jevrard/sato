@@ -36,13 +36,13 @@ class Encoder {
    */
   public function encode() {
     $boolVars = array();
-    $orderRelations = array();
     try {
-      $globalFNC = $this->csp->computeGlobalFNC($boolVars,$orderRelations);
+      $globalFNC = $this->csp->computeGlobalFNC($boolVars);
   	} catch (Exception $e) {
       throw new Exception($e->getMessage()."Encoder class : cannot encode CSP.\n");
   	}
-    $this->sat = new SAT($boolVars, array_merge($globalFNC,$orderRelations));
+    $orderRelations = $this->csp->predicateOrderRelations($boolVars);
+    $this->sat = new SAT($boolVars, array_merge($globalFNC, $orderRelations));
     return $this->sat;
   }
 
