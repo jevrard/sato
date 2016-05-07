@@ -78,11 +78,12 @@ class PrimitiveComparison extends ComparisonBase
 
   /**
    * Gives the reverse of @this
-   * i.e. transforms 'x <= c' into '-(x <= c-1)' (means 'x > c')
+   * i.e. transforms 'x <= c' into '-(x <= c-1)' (means 'x >= c')
    * @return PrimitiveComparison
    */
   public function reverse()
   {
-    return new PrimitiveComparison($this->variable, $this->const-1, abs($this->sign-1));
+    $add = $this->sign ? -1 : 1;
+    return new PrimitiveComparison($this->variable, $this->const+$add, abs($this->sign-1));
   }
 }
