@@ -13,4 +13,17 @@ Le domaine de notre étude se partage entre celui des mathématiques et celui de
 Une telle manipulation nécessite d’encoder les contraintes du CSP en formules propositionnelles, permettant ainsi l’utilisation d’un solveur SAT. La méthode d’encodage proposée dans cette étude est nommée `order encoding` qui représente par des symboles propositionnels des comparaisons de la forme `x ≤ a`, x étant une variable entière et a une valeur entière. Cet encodage diffère à celui – plus classique – du `sparse encoding` qui se base plutôt sur de l’assignation de valeurs aux variables entières comme `x = a`.
 
 ### Script PHP
-Notre script encode un problème CSP en un problème SAT puis écrit le fichier `.dimacs` nécessaire au *solver SAT Glucose* utilsé. Au terme de son exécution, il affiche le dialogue du *solver* et écrit son résultat dans le fichier `output.txt`.
+Le script php `sato` encode un problème CSP en un problème SAT et fournit ce dernier, exporté au format `dimacs`, au *solver SAT* `glucose` qui détermine ainsi sa **satisfiabilité**. Si une solution est trouvée, celle-ci sera présentée de façon rudimentaire.
+Pour le bon fonctionnement de ce programme, il est nécessaire d'exécuter dans un premier temps le script `configure.sh` qui compile le programme `glucose` :
+```sh
+$ cd sato
+$ ./configure.sh
+```
+Attention, la bibliothèque `libz` est requise :
+```sh
+$ apt-get install zlib1g-dev
+```
+Pour connaître en détails les possibilités du script **sato**, il suffit d'utiliser l'option `-h` ou `--help` :
+```sh
+$ ./sato.php --help
+```
