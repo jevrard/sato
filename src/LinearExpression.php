@@ -41,30 +41,6 @@ class LinearExpression
   }
 
   /**
-   * Gives all combinaisons of the domains
-   * i.e. researchs all constant b_i for the proposition 1
-   * @param array of array of int $domains
-   * @param array of array of int $combinaisons
-   * @return array of array int
-   */
-  public static function computeCombinaisons($domains, $combinaisons)
-  {
-    if (empty($domains))return $combinaisons;
-    if (empty($combinaisons)) {
-      foreach (array_shift($domains) as $value)
-        $combinaisons[] = [$value];
-
-      return self::computeCombinaisons($domains, $combinaisons);
-    }
-    $news = array();
-    foreach (array_shift($domains) as $value)
-      foreach ($combinaisons as $combi)
-        $news[] = array_merge($combi, [$value]);
-
-    return self::computeCombinaisons($domains, $news);
-  }
-
-  /**
    * Gives the number of terms in the expression
    * @return int
    */

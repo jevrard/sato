@@ -42,7 +42,7 @@ class CSP
   }
 
   /**
-   * Computes the boolean variables compound FNC of a clause at the rank $index
+   * Computes the boolean variables compound CNF of a clause at the rank $index
    * Adds in $boolVars all new boolean variables created
    * Adds in $orderRelations the order relation of each primitive comparison
    * Referring to the 9th definition
@@ -50,41 +50,41 @@ class CSP
    * @param array of string $boolVars
    * @return array of array of string
    */
-  private function computeClauseFNC($index, &$boolVars)
+  private function computeClauseCNF($index, &$boolVars)
   {
-    $clauseFNC = array(array());
+    $clauseCNF = array(array());
     $c = $this->constraints[$index];
     for ($i=0; $i<count($c); $i++) {
       $q = "q".$index.$i;
-      $clauseFNC[0][] = $q;
+      $clauseCNF[0][] = $q;
       $boolVars[] = $q;
-      $literalFNC = $c[$i]->computeFNC(); // called F_i in definition
-      foreach ($literalFNC as &$clause) {
+      $literalCNF = $c[$i]->computeCNF(); // called F_i in definition
+      foreach ($literalCNF as &$clause) {
         /* substitutes primitive comparison by a predicate */
         foreach ($clause as $key => $primComp)
           $clause[$key] = $primComp->predicateEquivalent();
-        $clauseFNC[] = array_merge(["-".$q], $clause);
+        $clauseCNF[] = array_merge(["-".$q], $clause);
       }
     }
 
-    return $clauseFNC;
+    return $clauseCNF;
   }
 
   /**
-   * Computes the global FNC of the $constraints
+   * Computes the global CNF of the $constraints
    * Adds in $boolVars all new boolean variables created
    * Adds in $orderRelations the order relation of each primitive comparison
    * Referring to the 10th definition
    * @param array of string $boolVars
    * @return array of array of string
    */
-  public function computeGlobalFNC(&$boolVars)
+  public function computeGlobalCNF(&$boolVars)
   {
-    $globalFNC = array();
+    $globalCNF = array();
     for($i=0; $i<count($this->constraints); $i++)
-      $globalFNC = array_merge($globalFNC, $this->computeClauseFNC($i, $boolVars));
+      $globalCNF = array_merge($globalCNF, $this->computeClauseCNF($i, $boolVars));
 
-    return $globalFNC;
+    return $globalCNF;
   }
 
   /**

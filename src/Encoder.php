@@ -33,12 +33,12 @@ class Encoder
   {
     $boolVars = array();
     try {
-      $globalFNC = $this->csp->computeGlobalFNC($boolVars);
+      $globalCNF = $this->csp->computeGlobalCNF($boolVars);
   	} catch (Exception $e) {
       throw new Exception($e->getMessage()."Encoder class : cannot encode CSP.\n");
   	}
     $orderRelations = $this->csp->predicateOrderRelations($boolVars);
-    $this->sat = new SAT($boolVars, array_merge($globalFNC, $orderRelations));
+    $this->sat = new SAT($boolVars, array_merge($globalCNF, $orderRelations));
 
     return $this->sat;
   }

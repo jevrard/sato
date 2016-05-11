@@ -39,34 +39,49 @@ class Inequation extends ComparisonBase
   }
 
   /**
-   * Computes the FNC composed of primitive comparaisons 'x <= c'
+   * Computes the CNF composed of primitive comparaisons 'x <= c'
    * Corresponds to proposition 1
    * @return array of array of PrimitiveComparison
    */
-  public function computeFNC()
+  public function computeCNF()
   {
-    $fnc = array();
+    $cnf = array();
     $n = $this->linearE->getNumberOfTerms();
     $sum = $this->const-$n+1; //c-n+1
-    $combinaisons = LinearExpression::computeCombinaisons($this->linearE->getTermsDomain(), array());
-    echo $this." {\n";
+    $combinaisons = self::computeCombinaisons($this->linearE->getTermsDomain(), array()); // constants b_i for the proposition 1
     foreach ($combinaisons as $combi) {
       if (array_sum($combi) != $sum) continue;
-      echo "\t[";
       $clause = array();
       for ($i=0; $i<$n; $i++) {
         $term = $this->linearE->getTerm($i);
         $primComp = new PrimitiveComparison($term->getVar(), $combi[$i]);
         $primComp->hashTranslation($term->getCoeff());
+        if (!$this->sign) $primComp->inverseSign();
         $clause[] = $primComp;
-        echo $primComp."; ";
       }
-      $fnc[] = $clause;
+      $cnf[] = $clause;
+    }
+
+    $cnf = array_unique($cnf, SORT_REGULAR);
+
+    if (!$this->sign) {
+      $cnf = array_unique(self::computeCombinaisons($cnf, array()), SORT_REGULAR);
+      foreach ($cnf as $key => $clause)
+        $cnf[$key] = array_unique($clause, SORT_REGULAR);
+    }
+
+    /* print FNC */
+    echo $this." {\n";
+    foreach ($cnf as $clause) {
+      echo "\t[";
+      foreach ($clause as $literal) {
+        echo $literal."; ";
+      }
       echo "],\n";
     }
     echo "}\n\n";
 
-    return $fnc;
+    return $cnf;
   }
 
   /**
