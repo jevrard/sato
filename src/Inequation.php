@@ -1,6 +1,6 @@
 <?php
 require_once 'PrimitiveComparison.php';
-require_once 'LinearExpression.php';
+require_once 'LinearTerm.php';
 
 /**
  * Represents an inequation, linear in a first time
@@ -10,19 +10,22 @@ require_once 'LinearExpression.php';
 class Inequation extends ComparisonBase
 {
   /**
-   * @var LinearExpression  Left-hand side
+   * @var array of LinearTerm       Left-hand side
+   * @var array of IntegerVariable  Integer variables of the expression
    */
-  private $linearE;
+  private $terms, $variables;
 
   /**
    * Initializes internal state of Inequation object.
-   * @param LinearExpression $expression
+   * @param array of LinearTerm $terms
+   * @param array of IntegerVariable $vars
    * @param int $const
    * @param boolean $sign
    */
-  public function __construct(LinearExpression $expression, $const, $sign = 1)
+  public function __construct($terms, $vars, $const, $sign = 1)
   {
-    $this->linearE = $expression;
+    $this->terms = $terms;
+    $this->variables = $vars;
     parent::__construct($const, $sign);
   }
 
@@ -33,7 +36,11 @@ class Inequation extends ComparisonBase
   public function __toString()
   {
     $output = $this->sign? "" : "-";
-    $output .= "(".$this->linearE." <= ".$this->const.")";
+    $output .= "(";
+    $i = 0;
+    for ($i; $i< count($this->terms)-1; $i++)
+      $output .= $this->terms[$i]."+";
+    $output .= $this->terms[$i]." <= ".$this->const.")";
 
     return $output;
   }
@@ -46,14 +53,14 @@ class Inequation extends ComparisonBase
   public function computeCNF()
   {
     $cnf = array();
-    $n = $this->linearE->getNumberOfTerms();
+    $n = count($this->terms);
     $sum = $this->const-$n+1; //c-n+1
-    $combinaisons = self::computeCombinaisons($this->linearE->getTermsDomain(), array()); // constants b_i for the proposition 1
+    $combinaisons = self::computeCombinaisons($this->getTermsDomain(), array()); // constants b_i for the proposition 1
     foreach ($combinaisons as $combi) {
       if (array_sum($combi) != $sum) continue;
       $clause = array();
       for ($i=0; $i<$n; $i++) {
-        $term = $this->linearE->getTerm($i);
+        $term = $this->terms[$i];
         $primComp = new PrimitiveComparison($term->getVar(), $combi[$i]);
         $primComp->hashTranslation($term->getCoeff());
         if (!$this->sign) $primComp->inverseSign();
@@ -85,13 +92,53 @@ class Inequation extends ComparisonBase
   }
 
   /**
+   * Gives all terms' domain
+   * @return array of array of int
+   */
+  public function getTermsDomain()
+  {
+    $domains = array();
+    foreach ($this->terms as $term) {
+      $domain = array();
+      for ($i=$term->getLowerBound()-1; $i<=$term->getUpperBound(); $i++)
+        $domain[] = $i;
+      $domains[] = $domain;
+    }
+
+    return $domains;
+  }
+
+  /**
    * Tests if @this has only on term on the left
    * @return boolean
    */
   public function isOneTerm()
   {
-    return $this->linearE->getNumberOfTerms() == 1;
+    return count($this->terms) == 1;
   }
+
+  /**
+	 * Normalizes an inequation
+	 * @param string $expression
+	 * @param boolean $sign
+	 */
+	public static function normalizeExpression(&$expression, &$sign) {
+    $match = array();
+    preg_match("/^\-\((.*)\)$/", $expression, $match);
+    if (count($match) == 2) {
+      $expression = $match[1];
+      $sign = abs($sign-1);
+    }
+
+    if (preg_match("/<=/", $expression)) return;
+    if (preg_match("/>/", $expression)) $sign = abs($sign-1);
+    if (preg_match("/>=|<[^=]/", $expression)) $expression = "1+".$expression;
+    $exp = preg_replace(["/</", "/>=/", "/>/"], "<=", $expression);
+    if ($exp === $expression) throw new Exception("Inequation class : invalid expression given.\n");
+    $expression = $exp;
+
+    self::normalizeExpression($expression, $sign);
+	}
 
   /**
    * Parses a string expression in Inequation objects
@@ -102,15 +149,35 @@ class Inequation extends ComparisonBase
    */
   public static function parseExpression($expression,$vars)
   {
+    $sign = 1;
     $expression = trim($expression);
+    echo "$expression\n";
+    self::normalizeExpression($expression, $sign);
     $split = preg_split("/<=/", $expression);
     if (count($split) != 2) throw new Exception("Inequation class : invalid expression given.\n");
-    try {
-      $linearExpression = LinearExpression::parseExpression($split[0], $vars);
-    } catch (Exception $e) {
-      throw new Exception($e->getMessage()."Inequation class : cannot parse expression.\n");
+
+    $terms = array();
+    $splitTerms = preg_split("/\+/", preg_replace("/-/", "+-", $split[0]), null, PREG_SPLIT_NO_EMPTY); // array of a_i.x_i
+    foreach ($splitTerms as $term) {
+      $coeff = 1;
+      $match = array();
+      $x = $term;
+      if (preg_match("/^-?\d+/", $term, $match)) {
+        $coeff = (int)$match[0];
+        $x = preg_replace("/^$coeff/", "", $term);
+      } else if (preg_match("/^-/", $term, $match)) {
+        $coeff = -1;
+        $x = preg_replace("/^-/", "", $term);
+      }
+      if ($coeff === 0) throw new Exception("Inequation class : coefficient cannot equal 0.\n");
+      if ($x == NULL) {
+        $split[1] += -1*$coeff;
+        continue;
+      }
+      if (!$var = IntegerVariable::varExistsInArray($x, $vars)) throw new Exception("Inequation class : variable $x in expression is not in the array of variables.\n");
+      $terms[] = new LinearTerm($var, $coeff);
     }
 
-    return new Inequation($linearExpression, (int)$split[1]);
+    return new Inequation($terms, $vars, (int)$split[1], $sign);
   }
 }
