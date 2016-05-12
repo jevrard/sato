@@ -151,7 +151,6 @@ class Inequation extends ComparisonBase
   {
     $sign = 1;
     $expression = trim($expression);
-    echo "$expression\n";
     self::normalizeExpression($expression, $sign);
     $split = preg_split("/<=/", $expression);
     if (count($split) != 2) throw new Exception("Inequation class : invalid expression given.\n");
@@ -169,13 +168,15 @@ class Inequation extends ComparisonBase
         $coeff = -1;
         $x = preg_replace("/^-/", "", $term);
       }
-      if ($coeff === 0) throw new Exception("Inequation class : coefficient cannot equal 0.\n");
+
       if ($x == NULL) {
         $split[1] += -1*$coeff;
         continue;
       }
-      if (!$var = IntegerVariable::varExistsInArray($x, $vars)) throw new Exception("Inequation class : variable $x in expression is not in the array of variables.\n");
-      $terms[] = new LinearTerm($var, $coeff);
+      if ($coeff === 0) throw new Exception("Inequation class : coefficient cannot equal 0.\n");
+      if (($var = IntegerVariable::varExistsInArray($x, $vars)) === false) throw new Exception("Inequation class : variable $x in expression is not in the array of variables.\n");
+      if (($key = LinearTerm::varExistsInArray($var, $terms)) === false) $terms[] = new LinearTerm($var, $coeff);
+      else $terms[$key]->addCoeff($coeff);
     }
 
     return new Inequation($terms, $vars, (int)$split[1], $sign);

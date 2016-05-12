@@ -41,6 +41,15 @@ class LinearTerm
   }
 
   /**
+   * Adds a value to the coefficient
+   * @param int
+   */
+  public function addCoeff($value)
+  {
+    $this->coeff += $value;
+  }
+
+  /**
    * Gives the term's coefficient
    * @return int
    */
@@ -76,5 +85,19 @@ class LinearTerm
   public function getVar()
   {
     return $this->var;
+  }
+
+  /**
+   * Reseachs in array of LinearTerm by a variable
+   * @param IntegerVariable $var
+   * @param array of LinearTerm $terms
+   * @return int | boolean
+   */
+  public static function varExistsInArray($var, $terms)
+  {
+    foreach ($terms as $key => $term)
+      if ($term->getVar() === $var) return $key;
+
+    return false;
   }
 }

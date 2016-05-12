@@ -88,8 +88,55 @@ class CSP
   }
 
   /**
+	 * Computes the distribution between two CNFs
+	 * @param array of array of string $cnf1
+   * @param array of array of string $cnf2
+   * @return array of array of string
+	 */
+	public static function distribute($cnf1, $cnf2) {
+    if (empty($cnf1)) return $cnf2;
+    if (empty($cnf2)) return $cnf1;
+
+    $cnf = array();
+    foreach ($cnf1 as $clause1)
+      foreach ($cnf2 as $clause2)
+        $cnf[] = array_unique(array_merge($clause1, $clause2));
+
+    return $cnf;
+  }
+
+  /**
+	 * Normalizes a constraint
+	 * @param string $expression
+   * @return array of array of string
+	 */
+	public static function normalizeExpression($expression) {
+    $patterns = "/!=|<=|>=|=|<|>/";
+    $split = preg_split($patterns, $expression);
+    if (count($split) != 2) throw new Exception("CSP class : invalid expression given.\n");
+    if (preg_match("/^[^\-]/", $split[1])) $split[1] = "+".$split[1];
+    $split[1] = preg_replace(["/\+/", "/\-/"], ["!", "+"], $split[1]);
+    $split[1] = preg_replace("/!/", "-", $split[1]);
+    $exp = implode("", $split);
+
+    $mapping = array(
+      "/!=/" => [["$exp<=-1", "-($exp<=0)"]],
+      "/<=/" => [["$exp<=0"]],
+      "/>=/" => [["$exp>=0"]],
+      "/=/" => [["$exp<=0"], ["-($exp<=-1)"]],
+      "/</" => [["$exp<0"]],
+      "/>/" => [["$exp>0"]],
+    );
+
+    foreach (array_keys($mapping) as $pattern)
+      if (preg_match($pattern, $expression)) return $mapping[$pattern];
+
+    throw new Exception("CSP class : invalid expression given.\n");
+	}
+
+  /**
    * Parses a string expression in CSP object
-   * Ex: " x  0  2  y  0  2  [x-y<=-1  -x+y<=-1]  [x+y<=0] "
+   * Ex: " x  1  3  y  -1  0  ['x+y<1']  ['-(-x+y>=-3)'] "
    * @param string $expression
    * @return CSP
    * @throws Exception
@@ -97,10 +144,10 @@ class CSP
   public static function parseExpression($expression)
   {
     /* Parse integer variables with domains */
-    $varPattern = "/\s[a-z]\w*\s\s\-?\d+\s\s\-?\d+\s/i";
-    $varMatches = array();
-    preg_match_all($varPattern, $expression, $varMatches);
     $vars = array();
+    $varMatches = array();
+    $varPattern = "/\s[a-z]\w*\s\s\-?\d+\s\s\-?\d+\s/i";
+    preg_match_all($varPattern, $expression, $varMatches);
     try {
       foreach ($varMatches[0] as $varExpression)
         $vars[] = IntegerVariable::parseExpression($varExpression);
@@ -108,25 +155,33 @@ class CSP
       throw new Exception($e->getMessage()."CSP class : cannot parse expression.\n");
     }
 
-    /* Parse inequations */
-    $constraints = array();
-    $expression = preg_replace($varPattern, "", $expression);
-    $clausePattern = "/\[[^\[]+\]/";
+    /* Parse constraints */
     $clauses = array();
-    preg_match_all($clausePattern, $expression, $clauses);
+    $clauseMatches = array();
+    $constraints = array();
+    preg_match_all("/\[[^\[]+\]/", preg_replace($varPattern, "", $expression), $clauseMatches);
     try {
-      foreach ($clauses[0] as $clause) {
-        $inequations = array();
+      foreach ($clauseMatches[0] as $clause) {
         $clause = preg_split("/\s+/", preg_replace(["/\[/", "/\]/"], "", $clause), null, PREG_SPLIT_NO_EMPTY);
+        $set = array();
+        foreach ($clause as $literal)
+          $set = self::distribute($set, self::normalizeExpression($literal));
+        $constraints = array_merge($constraints, $set);
+      }
+
+      print_r($constraints);
+
+      foreach ($constraints as $clause) {
+        $inequations = array();
         foreach ($clause as $ineqExpression)
           $inequations[] = Inequation::parseExpression($ineqExpression,$vars);
-        $constraints[] = $inequations;
+        $clauses[] = $inequations;
       }
     } catch (Exception $e) {
       throw new Exception($e->getMessage()."CSP class : cannot parse expression.\n");
     }
 
-    return new CSP($vars,$constraints);
+    return new CSP($vars, $clauses);
   }
 
   /**

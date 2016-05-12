@@ -73,13 +73,15 @@ function printDoc() {
   echo <<<DOC
 
 USAGE EXAMPLES:
-  --> SATISFIABLE
+  ~ SATISFIABLE ~
   ./sato.php x 0 2 y 0 2 ['x-y<=-1' '-x+y<=-1']
   ./sato.php x 1 3 y -1 0 ['x+y<1'] ['-x+y>=-3']
   ./sato.php x 2 6 y 2 6 ['x+y<=7']
-  --> UNSATISFIABLE
+  ./sato.php x 0 1 y 0 1 ['x!=y' 'x=y']
+  ~ UNSATISFIABLE ~
   ./sato.php x 1 3 y -1 0 ['x+y<1'] ['-(-x+y>=-3)']
   ./sato.php x 1 3 y 0 1 ['x+y<1'] ['-x+y>=-3']
+  ./sato.php x 0 2 y 0 2 ['x!=y'] ['x=y']
 
 AVAILABLE OPTIONS:
   -h or --help : display this documentation
