@@ -51,7 +51,7 @@ class SAT
   public function exportToDimacs($filename, $comment = "")
   {
     $content = "c Created from SAT object\n";
-    $content .= "c ".$comment."\n";
+    if ($comment) $content .= "c ".$comment."\n";
     $content .= "c\n";
     $content .= "p cnf ".count($this->variables)." ".count($this->clauses)."\n";
     foreach ($this->clauses as $clause) {

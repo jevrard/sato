@@ -170,8 +170,6 @@ class CSP
         $constraints = array_merge($constraints, $set);
       }
 
-      print_r($constraints);
-
       foreach ($constraints as $clause) {
         $inequations = array();
         foreach ($clause as $ineqExpression)

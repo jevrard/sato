@@ -65,6 +65,27 @@ class PrimitiveComparison extends ComparisonBase
   }
 
   /**
+   * Parses a string expression in PrimitiveComparison objects
+   * @param string $expression
+   * @return PrimitiveComparison
+   * @throws Exception
+   */
+  public static function parseExpression($expression)
+  {
+    $expression = preg_replace("/^p/", "", $expression);
+    $match = array();
+    $varName = NULL;
+    $const = NULL;
+    if (preg_match("/-?\d+$/", $expression, $match)) {
+      $const = (int)$match[0];
+      $varName = preg_replace("/$const$/", "", $expression);
+    }
+    if ($varName === NULL || $const === NULL) throw new Exception("PrimitiveComparison class : invalid expression given.\n");
+
+    return array('name' => $varName, 'const' => $const);
+  }
+
+  /**
    * Gives the predicate equivalent of @this (with $sign)
    * i.e. transforms '-(x <= c)' into '-pxc'
    * @return string
