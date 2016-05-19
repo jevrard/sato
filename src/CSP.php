@@ -114,11 +114,13 @@ class CSP
     $patterns = "/!=|<=|>=|=|<|>/";
     $split = preg_split($patterns, $expression);
     if (count($split) != 2) throw new Exception("CSP class : invalid expression given.\n");
-    if ($split[1] == "0") return [[$expression]];
-    if (preg_match("/^[^\-]/", $split[1])) $split[1] = "+".$split[1];
-    $split[1] = preg_replace(["/\+/", "/\-/"], ["!", "+"], $split[1]);
-    $split[1] = preg_replace("/!/", "-", $split[1]);
-    $exp = implode("", $split);
+    if ($split[1] == "0") $exp = $split[0];
+    else {
+      if (preg_match("/^[^\-]/", $split[1])) $split[1] = "+".$split[1];
+      $split[1] = preg_replace(["/\+/", "/\-/"], ["!", "+"], $split[1]);
+      $split[1] = preg_replace("/!/", "-", $split[1]);
+      $exp = implode("", $split);
+    }
 
     $mapping = array(
       "/!=/" => [["$exp<=-1", "-($exp<=0)"]],
@@ -169,6 +171,8 @@ class CSP
           $set = self::distribute($set, self::normalizeExpression($literal));
         $constraints = array_merge($constraints, $set);
       }
+
+      print_r($constraints);
 
       foreach ($constraints as $clause) {
         $inequations = array();
