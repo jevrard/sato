@@ -38,14 +38,16 @@ if(($key = array_search("-f", $argv)) !== false) {
   }
 }
 
-/* Create the SAT problem from the CSP */
+/* Create and solve the SAT problem from the CSP */
 $argv = " ".implode("  ", $argv)." ";
 try {
   $csp = CSP::parseExpression($argv);
   echo $csp;
+
   $encoder = new Encoder($csp);
   $sat = $encoder->encode();
   echo $sat;
+
   $solver = new Solver($sat);
   if (isset($dimacsFilePath)) {
     $solver->prepare($dimacsFilePath, $comment);
@@ -75,7 +77,7 @@ USAGE EXAMPLES:
 AVAILABLE OPTIONS:
   -h or --help : display this documentation
   -v : verbose - display solver SAT output
-  -i : interprete the solver's result
+  -i : interprete and display the solver's solutions
   -f <file_name.dimacs> <comment>: only generate the dimacs file with name 'file_name.dimacs' and a comment 'comment'
 
 

@@ -29,6 +29,56 @@ class Solver
   }
 
   /**
+   * Adds the new result in the DIMACS file
+   */
+  private function addResultInDimacs()
+  {
+    if (($output = file_get_contents(self::$outputFile)) === false) throw new Exception("Solver object : cannot read the file ".self::$outputFile.".\n");
+    $split = explode(" ", $output);
+    foreach ($split as &$value)
+      $value = -1 * (int) $value;
+
+    if (($dimacs = file_get_contents(self::$inputFile)) === false) throw new Exception("Solver object : cannot read the file ".self::$inputFile.".\n");
+
+    preg_match("/(p\scnf\s\d+\s)(\d+)\s/", $dimacs, $header);
+    $dimacs = preg_replace("/p\scnf\s\d+\s(\d+)/", $header[1].((int)$header[2]+1), $dimacs).implode(" ", $split)."\n";
+
+    if (file_put_contents(self::$inputFile, $dimacs) === false) throw new Exception("Solver object : cannot write in the file ".self::$inputFile.".\n");
+  }
+
+  /**
+   * Executes the SAT solver glucose
+   * @param boolean $verbose Displays or not the SAT solver's output
+   */
+  private function execute($verbose = false)
+  {
+    $command = escapeshellcmd("./glucose-syrup/simp/glucose_static ".self::$inputFile." ".self::$outputFile);
+    $output = shell_exec($command);
+    if ($verbose) echo $output."\n";
+  }
+
+  /**
+   * Displays the interpretation of the SAT solver's result
+   * @return NULL|array of int
+   * @throws Exception
+   */
+  private function findAllSolutions()
+  {
+    $solution = array();
+    try {
+      while ($this->isSatisfiable()) {
+        $solutions[] = $this->interprete();
+        $this->addResultInDimacs();
+        $this->execute();
+      }
+    } catch (Exception $e) {
+      throw new Exception($e->getMessage()."Solver class : cannot interprete the result.\n");
+    }
+
+    return $solutions;
+  }
+
+  /**
    * Displays the interpretation of the SAT solver's result
    * @return NULL|array of int
    * @throws Exception
@@ -60,6 +110,17 @@ class Solver
   }
 
   /**
+   * Determines the satisfiability of the current state of .dimacs file
+   * @return boolean
+   */
+  private function isSatisfiable()
+  {
+    if (($content = file_get_contents(self::$outputFile)) === false) throw new Exception("Solver object : cannot read the file ".self::$outputFile.".\n");
+    if (preg_match("/^UNSAT/", $content)) return false;
+    return true;
+  }
+
+  /**
    * Makes the DIMACS file
    * @param string $filePath
    * @throws Exception
@@ -81,22 +142,24 @@ class Solver
    */
   public function solve($verbose, $interprete)
   {
-    try {
-      $this->prepare(self::$inputFile);
-      $command = escapeshellcmd("./glucose-syrup/simp/glucose_static ".self::$inputFile." ".self::$outputFile);
-      $output = shell_exec($command);
-      if ($verbose) echo $output."\n";
-      if (($interpretation = $this->interprete()) === NULL)
-        echo "--> The SAT problem is unsatisfiable.\n";
-      else {
-        echo "--> The SAT problem is satisfiable.\n";
-        if ($interprete) {
-          echo "\nThe solution tuple is :\n";
-          foreach ($interpretation as $name => $value) echo "\t$name = $value ";
+    $this->prepare(self::$inputFile);
+    $this->execute($verbose);
+    if (!$this->isSatisfiable())
+      echo "--> The SAT problem is unsatisfiable.\n";
+    else {
+      echo "--> The SAT problem is satisfiable.\n";
+      if ($interprete) {
+        try {
+          $solutions = $this->findAllSolutions();
+          echo "\nThere are ".count($solutions). " solution(s) :\n";
+          foreach ($solutions as $interpretation) {
+            foreach ($interpretation as $name => $value) echo "\t$name = $value ";
+            echo "\n";
+          }
+        } catch (Exception $e) {
+          throw new Exception($e->getMessage()."Solver object : cannot solve the SAT problem.\n");
         }
       }
-    } catch (Exception $e) {
-      throw new Exception($e->getMessage()."Solver object : cannot solve the SAT problem.\n");
     }
   }
 }
