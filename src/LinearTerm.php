@@ -2,6 +2,13 @@
 require_once 'IntegerVariable.php';
 
 /**
+ * This file is part of the sato package.
+ * (c) 2016 Justine Evrard & Mariam Bouzid
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+/**
  * Represents a linear term
  * Form: a.x where a is a non null relative coefficient and x an integer variable
  * @author Justine Evrard & Mariam Bouzid

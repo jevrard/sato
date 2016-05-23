@@ -3,6 +3,13 @@ require_once 'PrimitiveComparison.php';
 require_once 'LinearTerm.php';
 
 /**
+ * This file is part of the sato package.
+ * (c) 2016 Justine Evrard & Mariam Bouzid
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+/**
  * Represents an inequation, linear in a first time
  * Form: f(u) <= c, where u is a vector like (x_1, ..., x_n) and c is a constant integer
  * @author Justine Evrard & Mariam Bouzid

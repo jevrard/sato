@@ -2,6 +2,13 @@
 require_once 'Inequation.php';
 
 /**
+ * This file is part of the sato package.
+ * (c) 2016 Justine Evrard & Mariam Bouzid
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+/**
  * Represents CSP problem
  * @author Justine Evrard & Mariam Bouzid
  */

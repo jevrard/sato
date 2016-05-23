@@ -3,8 +3,15 @@
 require_once 'src/Encoder.php';
 require_once 'src/Solver.php';
 
-echo "\n-- Project SATO using glucose 4.0 based on MiniSAT --\n";
-echo "-- Mariam Bouzid & Justine Evrard --\n\n";
+echo <<<EOD
+
+-- Project SATO using glucose 4.0 based on MiniSAT --
+-- SATO Copyright (C) 2016 Justine Evrard & Mariam Bouzid --
+For the full copyright and license information, please view the
+LICENSE file that was distributed with this source code.
+
+
+EOD;
 
 unset($argv[0]);
 
@@ -65,14 +72,14 @@ function printDoc() {
 
 USAGE EXAMPLES:
   ~ SATISFIABLE ~
-  ./sato.php x 0 2 y 0 2 ['x-y<=-1' '-x+y<=-1']
-  ./sato.php x 1 3 y -1 0 ['x+y<1'] ['-x+y>=-3']
-  ./sato.php x 2 6 y 2 6 ['x+y<=7']
-  ./sato.php x 0 1 y 0 1 ['x!=y' 'x=y']
+  ./sato x 0 2 y 0 2 ['x-y<=-1' '-x+y<=-1']
+  ./sato x 1 3 y -1 0 ['x+y<1'] ['-x+y>=-3']
+  ./sato x 2 6 y 2 6 ['x+y<=7']
+  ./sato x 0 1 y 0 1 ['x!=y' 'x=y']
   ~ UNSATISFIABLE ~
-  ./sato.php x 1 3 y -1 0 ['x+y<1'] ['-(-x+y>=-3)']
-  ./sato.php x 1 3 y 0 1 ['x+y<1'] ['-x+y>=-3']
-  ./sato.php x 0 2 y 0 2 ['x!=y'] ['x=y']
+  ./sato x 1 3 y -1 0 ['x+y<1'] ['-(-x+y>=-3)']
+  ./sato x 1 3 y 0 1 ['x+y<1'] ['-x+y>=-3']
+  ./sato x 0 2 y 0 2 ['x!=y'] ['x=y']
 
 AVAILABLE OPTIONS:
   -h or --help : display this documentation
