@@ -95,7 +95,7 @@ class Inequation extends ComparisonBase
     }
     echo "}\n\n";
 
-    return $cnf;
+    return empty($cnf) ? [[]] : $cnf; // if no correct combinaison found, set of empty clause returned
   }
 
   /**
