@@ -70,6 +70,14 @@ echo "\n";
 function printDoc() {
   echo <<<DOC
 
+INSTRUCTIONS:
+Script's arguments can be :
+  - an integer variable's name and its domain like x 0 2
+  - constraints on clausal form like ['<constraint>' '<constraint>'] ['<constraint>']
+    where constraints are composed of two linear expressions separated by one of these symbol : <=, >=, <, >, !=, =
+
+Arguments' order doesn't matter but if constraints' form isn't respected or if an integer variable's declaration is missing, the script won't succeed.
+
 USAGE EXAMPLES:
   ~ SATISFIABLE ~
   ./sato x 0 2 y 0 2 ['x-y<=-1' '-x+y<=-1']

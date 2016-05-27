@@ -25,5 +25,5 @@ $ apt-get install zlib1g-dev
 ```
 Pour connaître en détails les possibilités du script **sato**, il suffit d'utiliser l'option `-h` ou `--help` :
 ```sh
-$ ./sato.php --help
+$ ./sato --help
 ```
