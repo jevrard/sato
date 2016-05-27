@@ -51,7 +51,7 @@ class PrimitiveComparison extends ComparisonBase
    */
   public function booleanEquivalent()
   {
-    return "p".$this->variable->getName().$this->const;
+    return "p".$this->variable->getName()."_".$this->const;
   }
 
   /**
@@ -80,14 +80,9 @@ class PrimitiveComparison extends ComparisonBase
   public static function parseExpression($expression)
   {
     $expression = preg_replace("/^p/", "", $expression);
-    $match = array();
-    $varName = NULL;
-    $const = NULL;
-    if (preg_match("/-?\d+$/", $expression, $match)) {
-      $const = (int)$match[0];
-      $varName = preg_replace("/$const$/", "", $expression);
-    }
-    if ($varName === NULL || $const === NULL) throw new Exception("PrimitiveComparison class : invalid expression given.\n");
+    $split = preg_split("/_/", $expression);
+    $varName = $split[0];
+    $const = $split[1];
 
     return array('name' => $varName, 'const' => $const);
   }

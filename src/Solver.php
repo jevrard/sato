@@ -82,7 +82,7 @@ class Solver
       throw new Exception($e->getMessage()."Solver class : cannot interprete the result.\n");
     }
 
-    return $solutions;
+    return array_unique($solutions, SORT_REGULAR);
   }
 
   /**
